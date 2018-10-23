@@ -1,3 +1,3 @@
 /home/mitja/repos/SFML-learn/build/CMakeFiles/rebuild_cache.dir
-/home/mitja/repos/SFML-learn/build/CMakeFiles/run.dir
+/home/mitja/repos/SFML-learn/build/CMakeFiles/events.dir
 /home/mitja/repos/SFML-learn/build/CMakeFiles/edit_cache.dir

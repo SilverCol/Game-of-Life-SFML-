@@ -5,5 +5,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(src)
 
-add_executable(run src/main.cpp)
-target_link_libraries(run sfml-graphics sfml-window sfml-system)
+add_executable(events src/events.cpp)
+target_link_libraries(events sfml-graphics sfml-window sfml-system)

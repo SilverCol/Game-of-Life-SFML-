@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named run
+# Target rules for targets named events
 
 # Build rule for target.
-run: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 run
-.PHONY : run
+events: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 events
+.PHONY : events
 
 # fast build rule for target.
-run/fast:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
-.PHONY : run/fast
+events/fast:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/build
+.PHONY : events/fast
 
-src/main.o: src/main.cpp.o
+src/events.o: src/events.cpp.o
 
-.PHONY : src/main.o
+.PHONY : src/events.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/events.cpp.o:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/src/events.cpp.o
+.PHONY : src/events.cpp.o
 
-src/main.i: src/main.cpp.i
+src/events.i: src/events.cpp.i
 
-.PHONY : src/main.i
+.PHONY : src/events.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/events.cpp.i:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/src/events.cpp.i
+.PHONY : src/events.cpp.i
 
-src/main.s: src/main.cpp.s
+src/events.s: src/events.cpp.s
 
-.PHONY : src/main.s
+.PHONY : src/events.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/events.cpp.s:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/src/events.cpp.s
+.PHONY : src/events.cpp.s
 
 # Help Target
 help:
@@ -157,11 +157,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... run"
+	@echo "... events"
 	@echo "... edit_cache"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/events.o"
+	@echo "... src/events.i"
+	@echo "... src/events.s"
 .PHONY : help
 
 

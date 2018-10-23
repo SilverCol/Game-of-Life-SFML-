@@ -60,39 +60,39 @@ CMAKE_SOURCE_DIR = /home/mitja/repos/SFML-learn
 CMAKE_BINARY_DIR = /home/mitja/repos/SFML-learn/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/run.dir
+# Target rules for target CMakeFiles/events.dir
 
 # All Build rule for target.
-CMakeFiles/run.dir/all:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/depend
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/mitja/repos/SFML-learn/build/CMakeFiles --progress-num=1,2 "Built target run"
-.PHONY : CMakeFiles/run.dir/all
+CMakeFiles/events.dir/all:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/depend
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/mitja/repos/SFML-learn/build/CMakeFiles --progress-num=1,2 "Built target events"
+.PHONY : CMakeFiles/events.dir/all
 
 # Include target in all.
-all: CMakeFiles/run.dir/all
+all: CMakeFiles/events.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/run.dir/rule: cmake_check_build_system
+CMakeFiles/events.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/mitja/repos/SFML-learn/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/run.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/events.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/mitja/repos/SFML-learn/build/CMakeFiles 0
-.PHONY : CMakeFiles/run.dir/rule
+.PHONY : CMakeFiles/events.dir/rule
 
 # Convenience name for target.
-run: CMakeFiles/run.dir/rule
+events: CMakeFiles/events.dir/rule
 
-.PHONY : run
-
-# clean rule for target.
-CMakeFiles/run.dir/clean:
-	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/clean
-.PHONY : CMakeFiles/run.dir/clean
+.PHONY : events
 
 # clean rule for target.
-clean: CMakeFiles/run.dir/clean
+CMakeFiles/events.dir/clean:
+	$(MAKE) -f CMakeFiles/events.dir/build.make CMakeFiles/events.dir/clean
+.PHONY : CMakeFiles/events.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/events.dir/clean
 
 .PHONY : clean
 
