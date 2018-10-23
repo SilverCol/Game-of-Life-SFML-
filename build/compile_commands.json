@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/mitja/repos/SFML-learn/build",
-  "command": "/usr/bin/c++   -I/home/mitja/repos/SFML-learn/src    -std=gnu++11 -o CMakeFiles/events.dir/src/events.cpp.o -c /home/mitja/repos/SFML-learn/src/events.cpp",
-  "file": "/home/mitja/repos/SFML-learn/src/events.cpp"
-}
-]
