@@ -105,6 +105,7 @@ int main()
                     std::cout << "the left button was released" << std::endl;
                     std::cout << "mouse x: " << event.mouseButton.x << std::endl;
                     std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                    shape.setPosition(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                 }
             }
 
