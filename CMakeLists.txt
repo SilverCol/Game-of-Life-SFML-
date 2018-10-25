@@ -10,3 +10,6 @@ target_link_libraries(events sfml-graphics sfml-window sfml-system)
 
 add_executable(draw src/draw.cpp)
 target_link_libraries(draw sfml-graphics sfml-window sfml-system)
+
+add_executable(game src/gameOfLife.cpp)
+target_link_libraries(game sfml-graphics sfml-window sfml-system)
