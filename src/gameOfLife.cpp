@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <bitset>
 #include <iostream>
 
 namespace
@@ -7,10 +8,11 @@ namespace
     static const size_t SQUARE_SIZE = 5;
     static const size_t WINDOW_SIZE = WORLD_SIZE * SQUARE_SIZE;
 
-    static std::vector<std::vector<bool> > auxCells(WORLD_SIZE, std::vector<bool>(WORLD_SIZE, false));
-    void stepForward(std::vector<std::vector<bool> >& cells)
+    static std::bitset<WORLD_SIZE*WORLD_SIZE> auxCells(0);
+    void stepForward(std::bitset<WORLD_SIZE*WORLD_SIZE>& cells)
     {
         std::cout << "START" << std::endl;
+        auxCells = cells;
         for (int y = 0; y < WORLD_SIZE; ++y)
         {
             for (int x = 0; x < WORLD_SIZE; ++x)
@@ -20,88 +22,87 @@ namespace
                 {
                     if (x == 0)
                     {
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y+1).at(x+1)) ++count;
-                        if (cells.at(y+1).at(x)) ++count;
+                        if (cells.test(WORLD_SIZE*y + x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + x)) ++count;
                     }
                     else if (x == WORLD_SIZE - 1)
                     {
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y+1).at(x-1)) ++count;
-                        if (cells.at(y+1).at(x)) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x))) ++count;
                     }
                     else
                     {
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y+1).at(x-1)) ++count;
-                        if (cells.at(y+1).at(x)) ++count;
-                        if (cells.at(y+1).at(x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x+1))) ++count;
                     }
                 }
                 else if (y == WORLD_SIZE - 1)
                 {
                     if (x == 0)
                     {
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y-1).at(x+1)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
                     }
                     else if (x == WORLD_SIZE - 1)
                     {
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y-1).at(x-1)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
                     }
                     else
                     {
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y-1).at(x-1)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
-                        if (cells.at(y-1).at(x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x+1))) ++count;
                     }
                 }
                 else if (x == 0)
                 {
-                        if (cells.at(y+1).at(x)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
-                        if (cells.at(y+1).at(x+1)) ++count;
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y-1).at(x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x+1))) ++count;
                 }
                 else if (x == WORLD_SIZE - 1)
                 {
-                        if (cells.at(y+1).at(x)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
-                        if (cells.at(y+1).at(x-1)) ++count;
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y-1).at(x-1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x-1))) ++count;
                 }
                 else
                 {
-                        if (cells.at(y-1).at(x-1)) ++count;
-                        if (cells.at(y-1).at(x)) ++count;
-                        if (cells.at(y-1).at(x+1)) ++count;
-                        if (cells.at(y).at(x-1)) ++count;
-                        if (cells.at(y).at(x+1)) ++count;
-                        if (cells.at(y+1).at(x-1)) ++count;
-                        if (cells.at(y+1).at(x)) ++count;
-                        if (cells.at(y+1).at(x+1)) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y-1) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y) + (x+1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x-1))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x))) ++count;
+                        if (cells.test(WORLD_SIZE*(y+1) + (x+1))) ++count;
                 }
 
-                auxCells = cells;
-                if (cells.at(x).at(y) && count < 3)
+                if (cells.test(WORLD_SIZE*y + x) && (count < 2 || count > 3))
                 {
-                    auxCells.at(x).at(y) = false;
+                    auxCells.flip(WORLD_SIZE*y + x);
                 }
-                if (!cells.at(x).at(y) && count > 3)
+                if (!cells.test(WORLD_SIZE*y + x) && count == 3)
                 {
-                    auxCells.at(x).at(y) = true;
+                    auxCells.flip(WORLD_SIZE*y + x);
                 }
-                cells = auxCells;
             }
         }
+        cells = auxCells;
         std::cout << "STOP" << std::endl;
     }
 }
@@ -140,7 +141,7 @@ int main()
     text.setCharacterSize(32);
     text.setFillColor(sf::Color::Yellow);
 
-    std::vector<std::vector<bool> > cells(WORLD_SIZE, std::vector<bool>(WORLD_SIZE, false));
+    std::bitset<WORLD_SIZE*WORLD_SIZE> cells(0);
     bool gameOn = false;
 
     sf::Clock timer;
@@ -249,7 +250,7 @@ int main()
                     {
                         size_t cellX = x/SQUARE_SIZE;
                         size_t cellY = y/SQUARE_SIZE;
-                        cells.at(cellY).at(cellX) = !cells.at(cellY).at(cellX);
+                        cells.flip(WORLD_SIZE*cellY + cellX);
                     }
                 }
             }
@@ -269,7 +270,7 @@ int main()
 
         if (gameOn)
         {
-            if (timer.getElapsedTime().asMilliseconds() > 500)
+            if (timer.getElapsedTime().asMilliseconds() > 50)
             {
                 std::cout << "New step after " << timer.getElapsedTime().asMilliseconds() << std::endl;
                 stepForward(cells);
@@ -282,7 +283,7 @@ int main()
         {
             for (int x = 0; x < WORLD_SIZE; ++x)
             {
-                if (cells.at(y).at(x))
+                if (cells.test(WORLD_SIZE*y + x))
                 {
                     square.setPosition(sf::Vector2f(x * SQUARE_SIZE, y * SQUARE_SIZE));
                     window.draw(square);
