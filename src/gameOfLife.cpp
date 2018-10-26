@@ -7,6 +7,8 @@ namespace
     static const size_t WORLD_SIZE = 128;
     static const size_t SQUARE_SIZE = 5;
     static const size_t WINDOW_SIZE = WORLD_SIZE * SQUARE_SIZE;
+    static const size_t GRID_WIDTH = 1;
+    static const size_t GRID_OPACITY = 32;
 
     static std::bitset<WORLD_SIZE*WORLD_SIZE> auxCells(0);
     void stepForward(std::bitset<WORLD_SIZE*WORLD_SIZE>& cells)
@@ -113,20 +115,16 @@ int main()
     sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "Game Of Life");
     window.setVerticalSyncEnabled(true);
 
-    sf::Texture white;
-    if (!white.create(SQUARE_SIZE, SQUARE_SIZE))
-    {
-        std::cout << "Error creating empty texture!" << std::endl;
-        return -1;
-    }
-    sf::Uint8 pixles[SQUARE_SIZE * SQUARE_SIZE * 4];
-    for (size_t i = 0; i < SQUARE_SIZE * SQUARE_SIZE * 4; ++i)
-    {
-        pixles[i] = 255;
-    }   
-    white.update(pixles);
-    sf::Sprite square;
-    square.setTexture(white);
+    sf::RectangleShape square(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
+    square.setFillColor(sf::Color::White);
+    sf::RectangleShape hLine(sf::Vector2f(WINDOW_SIZE, GRID_WIDTH));
+    hLine.setFillColor(sf::Color(255, 255, 255, GRID_OPACITY));
+    sf::RectangleShape vLine(sf::Vector2f(GRID_WIDTH, WINDOW_SIZE));
+    vLine.setFillColor(sf::Color(255, 255, 255, GRID_OPACITY));
+
+    sf::RectangleShape brush(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
+    brush.setFillColor(sf::Color(255, 0, 0, 128));
+    int32_t brushSize = 1;
 
     sf::Font font;
     if (!font.loadFromFile("font.ttf"))
@@ -139,10 +137,11 @@ int main()
     text.setFont(font);
     text.setString("Game Of Life");
     text.setCharacterSize(32);
-    text.setFillColor(sf::Color::Yellow);
+    text.setFillColor(sf::Color::White);
 
     std::bitset<WORLD_SIZE*WORLD_SIZE> cells(0);
     bool gameOn = false;
+    bool keyControl = false;
 
     sf::Clock timer;
     while (window.isOpen())
@@ -169,103 +168,108 @@ int main()
                 std::cout << "Focus gained." << std::endl;
             }
 
-            if (event.type == sf::Event::TextEntered)
-            {
-                if (event.text.unicode < 128)
-                    std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
-            }
-
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::Escape)
                 {
-                    std::cout << "the escape key was pressed" << std::endl;
-                    std::cout << "control:" << event.key.control << std::endl;
-                    std::cout << "alt:" << event.key.alt << std::endl;
-                    std::cout << "shift:" << event.key.shift << std::endl;
-                    std::cout << "system:" << event.key.system << std::endl;
-
                     gameOn = !gameOn;
                 }
-            }
-
-            if (event.type == sf::Event::MouseWheelScrolled)
-            {
-                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-                    std::cout << "wheel type: vertical" << std::endl;
-                else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
-                    std::cout << "wheel type: horizontal" << std::endl;
-                else
-                    std::cout << "wheel type: unknown" << std::endl;
-                std::cout << "wheel movement: " << event.mouseWheelScroll.delta << std::endl;
-                std::cout << "mouse x: " << event.mouseWheelScroll.x << std::endl;
-                std::cout << "mouse y: " << event.mouseWheelScroll.y << std::endl;
-            }
-
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == sf::Mouse::Right)
+                else if (event.key.code == sf::Keyboard::LShift && !gameOn)
                 {
-                    std::cout << "the right button was pressed" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-                }
-                if (event.mouseButton.button == sf::Mouse::Middle)
-                {
-                    std::cout << "the middle button was pressed" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-                }
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    std::cout << "the left button was pressed" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                    keyControl = !keyControl;
                 }
             }
 
-            if (event.type == sf::Event::MouseButtonReleased)
+            if (!gameOn && !keyControl)
             {
-                if (event.mouseButton.button == sf::Mouse::Right)
+                if (event.type == sf::Event::MouseWheelScrolled)
                 {
-                    std::cout << "the right button was released" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-                }
-                if (event.mouseButton.button == sf::Mouse::Middle)
-                {
-                    std::cout << "the middle button was released" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-                }
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    size_t x = event.mouseButton.x;
-                    size_t y = event.mouseButton.y;
-                    std::cout << "the left button was released" << std::endl;
-                    std::cout << "mouse x: " << x << std::endl;
-                    std::cout << "mouse y: " << y << std::endl;
-
-                    if (!gameOn)
+                    if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
                     {
-                        size_t cellX = x/SQUARE_SIZE;
-                        size_t cellY = y/SQUARE_SIZE;
-                        cells.flip(WORLD_SIZE*cellY + cellX);
+                        std::cout << "wheel type: vertical" << std::endl;
+                        brushSize += event.mouseWheelScroll.delta;
+                        if (brushSize < 1) brushSize = 1;
+                        brush.setSize(sf::Vector2f(brushSize * SQUARE_SIZE, brushSize * SQUARE_SIZE));
                     }
                 }
-            }
 
-            if (event.type == sf::Event::MouseMoved)
-            {
-                std::cout << "new mouse x: " << event.mouseMove.x << std::endl;
-                std::cout << "new mouse y: " << event.mouseMove.y << std::endl;
-            }
+                if (event.type == sf::Event::MouseButtonReleased)
+                {
+                    if (event.mouseButton.button == sf::Mouse::Right)
+                    {
+                        size_t x = event.mouseButton.x;
+                        size_t y = event.mouseButton.y;
+                        std::cout << "the right button was released" << std::endl;
+                        std::cout << "mouse x: " << x << std::endl;
+                        std::cout << "mouse y: " << y << std::endl;
 
-            if (event.type == sf::Event::MouseEntered)
-                std::cout << "the mouse cursor has entered the window" << std::endl;
-            
-            if (event.type == sf::Event::MouseLeft)
-                std::cout << "the mouse cursor has left the window" << std::endl;
+                        size_t cellX = x/SQUARE_SIZE;
+                        size_t cellY = y/SQUARE_SIZE;
+                        for (int n = cellY; n < cellY + brushSize && n < WORLD_SIZE; ++n)
+                        {
+                            for (int m = cellX; m < cellX + brushSize && m < WORLD_SIZE; ++m)
+                            {
+                                cells.reset(WORLD_SIZE*n + m);
+                            }
+                        }
+                    }
+                    if (event.mouseButton.button == sf::Mouse::Left)
+                    {
+                        size_t x = event.mouseButton.x;
+                        size_t y = event.mouseButton.y;
+                        std::cout << "the left button was released" << std::endl;
+                        std::cout << "mouse x: " << x << std::endl;
+                        std::cout << "mouse y: " << y << std::endl;
+
+                        size_t cellX = x/SQUARE_SIZE;
+                        size_t cellY = y/SQUARE_SIZE;
+                        for (int n = cellY; n < cellY + brushSize && n < WORLD_SIZE; ++n)
+                        {
+                            for (int m = cellX; m < cellX + brushSize && m < WORLD_SIZE; ++m)
+                            {
+                                cells.set(WORLD_SIZE*n + m);
+                            }
+                        }
+                    }
+                }
+
+                if (event.type == sf::Event::MouseMoved)
+                {
+                    size_t x = event.mouseMove.x;
+                    size_t y = event.mouseMove.y;
+                    std::cout << "new mouse x: " << x << std::endl;
+                    std::cout << "new mouse y: " << y << std::endl;
+                    size_t cellX = x/SQUARE_SIZE;
+                    size_t cellY = y/SQUARE_SIZE;
+                    brush.setPosition(sf::Vector2f(cellX*SQUARE_SIZE, cellY*SQUARE_SIZE));
+                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    {
+                        for (int n = cellY; n < cellY + brushSize && n < WORLD_SIZE; ++n)
+                        {
+                            for (int m = cellX; m < cellX + brushSize && m < WORLD_SIZE; ++m)
+                            {
+                                cells.set(WORLD_SIZE*n + m);
+                            }
+                        }
+                    }
+                    if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+                    {
+                        for (int n = cellY; n < cellY + brushSize && n < WORLD_SIZE; ++n)
+                        {
+                            for (int m = cellX; m < cellX + brushSize && m < WORLD_SIZE; ++m)
+                            {
+                                cells.reset(WORLD_SIZE*n + m);
+                            }
+                        }
+                    }
+                }
+
+                if (event.type == sf::Event::MouseEntered)
+                    std::cout << "the mouse cursor has entered the window" << std::endl;
+                
+                if (event.type == sf::Event::MouseLeft)
+                    std::cout << "the mouse cursor has left the window" << std::endl;
+            }
         }
 
         if (gameOn)
@@ -275,6 +279,25 @@ int main()
                 std::cout << "New step after " << timer.getElapsedTime().asMilliseconds() << std::endl;
                 stepForward(cells);
                 timer.restart();
+            }
+        }
+        else if (keyControl)
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
+                brush.move(0, -1);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {
+                brush.move(0, 1);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                brush.move(1, 0);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                brush.move(-1, 0);
             }
         }
 
@@ -290,7 +313,18 @@ int main()
                 }
             }
         }
-        window.draw(text);
+        if (!gameOn)
+        {
+            for (int i = 0; i <= WORLD_SIZE; ++i)
+            {
+                hLine.setPosition(sf::Vector2f(0, i * SQUARE_SIZE - 1));
+                vLine.setPosition(sf::Vector2f(i * SQUARE_SIZE - 1, 0));
+                window.draw(hLine);
+                window.draw(vLine);
+            }
+            window.draw(brush);
+            window.draw(text);
+        }
         window.display();
     }
 
