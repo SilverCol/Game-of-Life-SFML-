@@ -1,19 +1,15 @@
 #include "flatland.hpp"
+#include "cellPlane.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 namespace
 {
-    static const size_t GRID_SIZE = 1024;
+    static const size_t GRID_SIZE = 256;
     static size_t SQUARE_SIZE = 10;
     static size_t WORLD_SIZE = GRID_SIZE * SQUARE_SIZE;
-    static const size_t GRID_WIDTH = 1;
-    static const size_t GRID_OPACITY = 32;
 
-    static sf::RectangleShape square(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
-
-    static sf::RectangleShape hLine(sf::Vector2f(WORLD_SIZE, GRID_WIDTH));
-    static sf::RectangleShape vLine(sf::Vector2f(GRID_WIDTH, WORLD_SIZE));
+    static CellPlane cells(GRID_SIZE, SQUARE_SIZE, sf::Color::Blue, sf::Color(0, 255, 0, 32), sf::Color(0, 255, 0, 64), sf::Color(255, 255, 255, 32));
 
     static sf::RectangleShape brush(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
     static int32_t brushSize = 1;
@@ -30,9 +26,7 @@ namespace
         }
         WORLD_SIZE = GRID_SIZE * SQUARE_SIZE;
 
-        square.setSize(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
-        hLine.setSize(sf::Vector2f(WORLD_SIZE, GRID_WIDTH));
-        vLine.setSize(sf::Vector2f(GRID_WIDTH, WORLD_SIZE));
+        cells.setCellSize(SQUARE_SIZE);
         brush.setSize(sf::Vector2f(brushSize*SQUARE_SIZE, brushSize*SQUARE_SIZE));
     }
 }
@@ -45,8 +39,6 @@ int main()
     view.setCenter(WORLD_SIZE/2, WORLD_SIZE/2);
     window.setView(view);
 
-    hLine.setFillColor(sf::Color(255, 255, 255, GRID_OPACITY));
-    vLine.setFillColor(sf::Color(255, 255, 255, GRID_OPACITY));
     brush.setFillColor(sf::Color(255, 0, 0, 128));
 
     Flatland<GRID_SIZE> flatland;
@@ -83,8 +75,9 @@ int main()
             {
                 if (event.key.code == sf::Keyboard::Escape)
                 {
+                    cells.showGrid(gameOn);
+                    window.setMouseCursorVisible(gameOn);
                     gameOn = !gameOn;
-                    window.setMouseCursorVisible(!gameOn);
                 }
                 else if (event.key.code == sf::Keyboard::PageUp)
                 {
@@ -127,6 +120,7 @@ int main()
                             for (size_t m = cellX; m < cellX + brushSize && m < GRID_SIZE; ++m)
                             {
                                 flatland.raise(m, n);
+                                cells.raise(m, n);
                             }
                         }
                     }
@@ -137,6 +131,7 @@ int main()
                             for (size_t m = cellX; m < cellX + brushSize && m < GRID_SIZE; ++m)
                             {
                                 flatland.kill(m, n);
+                                cells.setDead(m, n);
                             }
                         }
                     }
@@ -169,6 +164,7 @@ int main()
                             for (size_t m = cellX; m < cellX + brushSize && m < GRID_SIZE; ++m)
                             {
                                 flatland.raise(m, n);
+                                cells.raise(m, n);
                             }
                         }
                     }
@@ -187,6 +183,7 @@ int main()
                             for (int m = cellX; m < cellX + brushSize && m < GRID_SIZE; ++m)
                             {
                                 flatland.kill(m, n);
+                                cells.setDead(m, n);
                             }
                         }
                     }
@@ -199,45 +196,35 @@ int main()
             if (timer.getElapsedTime().asMilliseconds() > 50)
             {
                 std::cout << "New step after " << timer.getElapsedTime().asMilliseconds() << std::endl;
-                flatland.evolve();
                 timer.restart();
+                flatland.evolve();
+
+                for (size_t y = 0; y < GRID_SIZE; ++y)
+                {
+                    for (size_t x = 0; x < GRID_SIZE; ++x)
+                    {
+                        if (flatland.change(x, y))
+                        {
+                            if (flatland.isAlive(x, y))
+                            {
+                                cells.raise(x, y);
+                            }
+                            else
+                            {
+                                cells.kill(x, y);
+                            }
+                        }
+                    }
+                }
             }
         }
 
         window.clear();
 
-        hLine.setPosition(sf::Vector2f(0, -1));
-        vLine.setPosition(sf::Vector2f(-1, 0));
-        window.draw(hLine);
-        window.draw(vLine);
-        hLine.setPosition(sf::Vector2f(0, WORLD_SIZE));
-        vLine.setPosition(sf::Vector2f(WORLD_SIZE, 0));
-        window.draw(hLine);
-        window.draw(vLine);
+        window.draw(cells);
 
-        for (size_t y = 0; y < GRID_SIZE; ++y)
-        {
-            for (size_t x = 0; x < GRID_SIZE; ++x)
-            {
-                if (flatland.isAlive(x, y))
-                {
-                    square.setPosition(sf::Vector2f(x * SQUARE_SIZE, y * SQUARE_SIZE));
-                    window.draw(square);
-                }
-            }
-        }
+        if (!gameOn) window.draw(brush);
 
-        if (!gameOn)
-        {
-            for (size_t i = 1; i < GRID_SIZE; ++i)
-            {
-                hLine.setPosition(sf::Vector2f(0, i * SQUARE_SIZE));
-                vLine.setPosition(sf::Vector2f(i * SQUARE_SIZE, 0));
-                window.draw(hLine);
-                window.draw(vLine);
-            }
-            window.draw(brush);
-        }
         window.display();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))

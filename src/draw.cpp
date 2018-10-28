@@ -1,60 +1,21 @@
+#include "cellPlane.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+namespace
+{
+    static const size_t GRID_SIZE = 20;
+    static uint8_t SQUARE_SIZE = 20;
+}
+
 int main()
 {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-
-    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    sf::RenderWindow window(sf::VideoMode(400, 400), "SFML works!",sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode((1 + GRID_SIZE) * SQUARE_SIZE, (1 + GRID_SIZE) * SQUARE_SIZE), "SFML works!");
     window.setVerticalSyncEnabled(true);
 
-    sf::Texture wood;
-    if (!wood.loadFromFile("wood.jpg"))
-    {
-        std::cout << "Error loading wood texture!" << std::endl;
-        return -1;
-    }
-    wood.setSmooth(true);
+    CellPlane cells(GRID_SIZE, SQUARE_SIZE, sf::Color::Cyan, sf::Color(0, 255, 0, 32), sf::Color::Black, sf::Color(255, 255, 255, 32));
 
-    sf::CircleShape log(200);
-    log.setTexture(&wood);
-
-    sf::Texture emptyTexture;
-    if (!emptyTexture.create(50, 50))
-    {
-        std::cout << "Error creating empty texture!" << std::endl;
-        return -1;
-    }
-    sf::Uint8 pixles[50 * 50 * 4];
-    for (size_t i = 0; i < 50*50*4; i+=4)
-    {
-        if ((i/4)%14 > 6)
-        {
-            continue;
-        }
-        pixles[i] = 32;
-        pixles[i+1] = 192;
-        pixles[i+2] = 255;
-        pixles[i+3] = 128;
-    }   
-    emptyTexture.update(pixles);
-
-    std::vector<sf::Sprite> squares;
-
-    sf::Font font;
-    if (!font.loadFromFile("font.ttf"))
-    {
-        std::cout << "Error loading font!" << std::endl;
-        return -1;
-    }
-
-    sf::Text text;
-    text.setFont(font);
-    text.setString("A nice piece of text indeed!");
-    text.setCharacterSize(32);
-    text.setFillColor(sf::Color::Yellow);
+    bool gameOn = false;
 
     while (window.isOpen())
     {
@@ -70,31 +31,12 @@ int main()
                 std::cout << "new height: " << event.size.height << std::endl;
             }
 
-            if (event.type == sf::Event::LostFocus)
-            {
-                std::cout << "Focus lost." << std::endl;
-            }
-            
-            if (event.type == sf::Event::GainedFocus)
-            {
-                std::cout << "Focus gained." << std::endl;
-            }
-
-            if (event.type == sf::Event::TextEntered)
-            {
-                if (event.text.unicode < 128)
-                    std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
-            }
-
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::Escape)
                 {
-                    std::cout << "the escape key was pressed" << std::endl;
-                    std::cout << "control:" << event.key.control << std::endl;
-                    std::cout << "alt:" << event.key.alt << std::endl;
-                    std::cout << "shift:" << event.key.shift << std::endl;
-                    std::cout << "system:" << event.key.system << std::endl;
+                    gameOn = !gameOn;
+                    cells.showGrid(!gameOn);
                 }
             }
 
@@ -109,6 +51,8 @@ int main()
                 std::cout << "wheel movement: " << event.mouseWheelScroll.delta << std::endl;
                 std::cout << "mouse x: " << event.mouseWheelScroll.x << std::endl;
                 std::cout << "mouse y: " << event.mouseWheelScroll.y << std::endl;
+                SQUARE_SIZE += event.mouseWheelScroll.delta;
+                cells.setCellSize(SQUARE_SIZE);
             }
 
             if (event.type == sf::Event::MouseButtonPressed)
@@ -140,6 +84,12 @@ int main()
                     std::cout << "the right button was released" << std::endl;
                     std::cout << "mouse x: " << event.mouseButton.x << std::endl;
                     std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+                    size_t x = event.mouseButton.x / SQUARE_SIZE;
+                    size_t y = event.mouseButton.y / SQUARE_SIZE;
+                    if (x < GRID_SIZE && y < GRID_SIZE)
+                    {
+                        cells.setDead(x, y);
+                    }
                 }
                 if (event.mouseButton.button == sf::Mouse::Middle)
                 {
@@ -152,12 +102,12 @@ int main()
                     std::cout << "the left button was released" << std::endl;
                     std::cout << "mouse x: " << event.mouseButton.x << std::endl;
                     std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-
-                    sf::Sprite square;
-                    square.setTexture(emptyTexture);
-                    square.setOrigin(25, 25);
-                    square.setPosition(sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
-                    squares.push_back(square);
+                    size_t x = event.mouseButton.x / SQUARE_SIZE;
+                    size_t y = event.mouseButton.y / SQUARE_SIZE;
+                    if (x < GRID_SIZE && y < GRID_SIZE)
+                    {
+                        cells.raise(x, y);
+                    }
                 }
             }
 
@@ -175,12 +125,7 @@ int main()
         }
 
         window.clear();
-        window.draw(log);
-        window.draw(text);
-        for (const sf::Sprite& square : squares)
-        {
-            window.draw(square);
-        }
+        window.draw(cells);
         window.display();
     }
 
