@@ -5,11 +5,11 @@
 
 namespace
 {
-    static const size_t GRID_SIZE = 256;
+    static const size_t GRID_SIZE = 128;
     static size_t SQUARE_SIZE = 10;
     static size_t WORLD_SIZE = GRID_SIZE * SQUARE_SIZE;
 
-    static CellPlane cells(GRID_SIZE, SQUARE_SIZE, sf::Color::Blue, sf::Color(0, 255, 0, 32), sf::Color(0, 255, 0, 64), sf::Color(255, 255, 255, 32));
+    static CellPlane cells(GRID_SIZE, SQUARE_SIZE, sf::Color::White, sf::Color(0, 255, 0, 32), sf::Color::Black, sf::Color(255, 255, 255, 32));
 
     static sf::RectangleShape brush(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
     static int32_t brushSize = 1;
