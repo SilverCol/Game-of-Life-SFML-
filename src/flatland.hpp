@@ -35,10 +35,11 @@ void Flatland<m_size>::evolve()
     {
         for (size_t x = 0; x < m_size; ++x)
         {
-            bool alive = m_cells.test(m_size*y + x);
+            size_t position = m_size*y + x;
+            bool alive = m_cells.test(position);
             int8_t neighbours = countNeighbours(x, y);
-            if (alive && (neighbours < 2 || neighbours > 3)) m_helper.flip(m_size*y + x);
-            if (!alive && neighbours == 3) m_helper.flip(m_size*y + x);
+            if (alive && (neighbours < 2 || neighbours > 3)) m_helper.flip(position);
+            if (!alive && neighbours == 3) m_helper.flip(position);
         }
     }
     m_diff^=m_helper;
@@ -98,27 +99,27 @@ int8_t Flatland<m_size>::countNeighbours(const size_t x, const size_t y)
     }
     else if (x == 0)
     {
-            if (m_cells.test(m_size*(y+1) + (x))) ++count;
-            if (m_cells.test(m_size*(y-1) + (x))) ++count;
-            if (m_cells.test(m_size*(y+1) + (x+1))) ++count;
             if (m_cells.test(m_size*(y) + (x+1))) ++count;
+            if (m_cells.test(m_size*(y-1) + (x))) ++count;
             if (m_cells.test(m_size*(y-1) + (x+1))) ++count;
+            if (m_cells.test(m_size*(y+1) + (x+1))) ++count;
+            if (m_cells.test(m_size*(y+1) + (x))) ++count;
     }
     else if (x == m_size - 1)
     {
-            if (m_cells.test(m_size*(y+1) + (x))) ++count;
-            if (m_cells.test(m_size*(y-1) + (x))) ++count;
-            if (m_cells.test(m_size*(y+1) + (x-1))) ++count;
             if (m_cells.test(m_size*(y) + (x-1))) ++count;
+            if (m_cells.test(m_size*(y-1) + (x))) ++count;
             if (m_cells.test(m_size*(y-1) + (x-1))) ++count;
+            if (m_cells.test(m_size*(y+1) + (x-1))) ++count;
+            if (m_cells.test(m_size*(y+1) + (x))) ++count;
     }
     else
     {
+            if (m_cells.test(m_size*(y) + (x-1))) ++count;
+            if (m_cells.test(m_size*(y) + (x+1))) ++count;
             if (m_cells.test(m_size*(y-1) + (x-1))) ++count;
             if (m_cells.test(m_size*(y-1) + (x))) ++count;
             if (m_cells.test(m_size*(y-1) + (x+1))) ++count;
-            if (m_cells.test(m_size*(y) + (x-1))) ++count;
-            if (m_cells.test(m_size*(y) + (x+1))) ++count;
             if (m_cells.test(m_size*(y+1) + (x-1))) ++count;
             if (m_cells.test(m_size*(y+1) + (x))) ++count;
             if (m_cells.test(m_size*(y+1) + (x+1))) ++count;

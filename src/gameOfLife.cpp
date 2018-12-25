@@ -5,7 +5,7 @@
 
 namespace
 {
-    static const size_t GRID_SIZE = 128;
+    static const size_t GRID_SIZE = 1024;
     static size_t SQUARE_SIZE = 10;
     static size_t WORLD_SIZE = GRID_SIZE * SQUARE_SIZE;
 
@@ -193,12 +193,13 @@ int main()
         }
         if (gameOn)
         {
-            if (timer.getElapsedTime().asMilliseconds() > 50)
+            if (timer.getElapsedTime().asMilliseconds() > 10)
             {
-                std::cout << "New step after " << timer.getElapsedTime().asMilliseconds() << std::endl;
                 timer.restart();
                 flatland.evolve();
+                std::cout << "Evolve took " << timer.getElapsedTime().asMilliseconds() << "ms" << std::endl;
 
+                timer.restart();
                 for (size_t y = 0; y < GRID_SIZE; ++y)
                 {
                     for (size_t x = 0; x < GRID_SIZE; ++x)
@@ -216,6 +217,7 @@ int main()
                         }
                     }
                 }
+                std::cout << "CellField took " << timer.getElapsedTime().asMilliseconds() << "ms" << std::endl;
             }
         }
 
